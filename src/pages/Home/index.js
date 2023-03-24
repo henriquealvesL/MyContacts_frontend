@@ -1,11 +1,15 @@
+import { useEffect, useState, useMemo } from "react";
 import { Link } from "react-router-dom";
 
+import delay from "../../utils/delay";
+
 import Modal from "../../components/Modal";
+import Loader from "../../components/Loader";
 
 import {
   Container,
   Header,
-  ListContainer,
+  ListHeader,
   Card,
   InputSearchContaier,
 } from "./styles";
@@ -13,40 +17,84 @@ import {
 import arrow from "../../assets/images/icons/arrow.svg";
 import edit from "../../assets/images/icons/edit.svg";
 import trash from "../../assets/images/icons/trash.svg";
-import Loader from "../../components/Loader";
 
 export default function Home() {
+  const [contacts, setContacts] = useState([]);
+  const [orderBy, setOrderBy] = useState("asc");
+  const [searchTerm, setSearchTerm] = useState("");
+  const [isLoading, setIsLoading] = useState(true);
+
+  const filteredContacts = useMemo(() => {
+    return contacts.filter((contact) =>
+      contact.name.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+  }, [contacts, searchTerm]);
+
+  useEffect(() => {
+    setIsLoading(true);
+    fetch(`http://localhost:3001/contacts?orderBy=${orderBy}`)
+      .then(async (response) => {
+        const data = await response.json();
+        setContacts(data);
+      })
+      .catch((error) => {
+        console.log(error);
+      })
+      .finally(() => {
+        setIsLoading(false);
+      });
+  }, [orderBy]);
+
+  function handleToggleOrderBy() {
+    setOrderBy((prevState) => (prevState === "asc" ? "desc" : "asc"));
+  }
+
+  function handleChangeSearchTerm(event) {
+    setSearchTerm(event.target.value);
+  }
+
   return (
     <Container>
       {/* <Modal danger /> */}
-      {/* <Loader /> */}
+      <Loader isLoading={isLoading} />
       <InputSearchContaier>
-        <input type="text" placeholder="Pesquisar contato" />
+        <input
+          type="text"
+          placeholder="Pesquisar contato"
+          value={searchTerm}
+          onChange={handleChangeSearchTerm}
+        />
       </InputSearchContaier>
       <Header>
-        <strong>3 Contatos</strong>
+        <strong>
+          {filteredContacts.length}
+          {filteredContacts.length === 1 ? " contato" : " contatos"}
+        </strong>
         <Link to="/new">Novo Contato</Link>
       </Header>
-      <ListContainer>
-        <header>
-          <button type="button" className="sort-button">
+
+      {filteredContacts.length > 0 && (
+        <ListHeader orderBy={orderBy}>
+          <button type="button" onClick={handleToggleOrderBy}>
             <span>Nome</span>
             <img src={arrow} alt="Arrow" />
           </button>
-        </header>
+        </ListHeader>
+      )}
 
-        <Card>
+      {filteredContacts.map((contact) => (
+        <Card key={contact.id}>
           <div className="info">
             <div className="contact-name">
-              <strong>Nome</strong>
-              <small>Categoria</small>
+              <strong>{contact.name}</strong>
+              {contact.category_name && <small>{contact.category_name}</small>}
             </div>
-            <span>E-mail</span>
-            <span>Telefone</span>
+            <span>{contact.email}</span>
+            <span>{contact.phone}</span>
           </div>
 
           <div className="actions">
-            <Link to="/edit/123">
+            <Link to={`/edit/${contact.id}`}>
               <img src={edit}></img>
             </Link>
             <button type="button">
@@ -54,7 +102,7 @@ export default function Home() {
             </button>
           </div>
         </Card>
-      </ListContainer>
+      ))}
     </Container>
   );
 }
