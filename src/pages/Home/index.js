@@ -31,18 +31,24 @@ export default function Home() {
   }, [contacts, searchTerm]);
 
   useEffect(() => {
-    setIsLoading(true);
-    fetch(`http://localhost:3001/contacts?orderBy=${orderBy}`)
-      .then(async (response) => {
+    async function loadContacts() {
+      try {
+        setIsLoading(true);
+
+        const response = await fetch(
+          `http://localhost:3001/contacts?orderBy=${orderBy}`
+        );
+
         const data = await response.json();
         setContacts(data);
-      })
-      .catch((error) => {
-        console.log(error);
-      })
-      .finally(() => {
+      } catch (error) {
+        console.log("Erro: ", error);
+      } finally {
         setIsLoading(false);
-      });
+      }
+    }
+
+    loadContacts();
   }, [orderBy]);
 
   function handleToggleOrderBy() {
