@@ -1,7 +1,7 @@
 import { useEffect, useState, useMemo } from "react";
 import { Link } from "react-router-dom";
 
-import delay from "../../utils/delay";
+import ContactsService from "../../services/ContactsService";
 
 import Modal from "../../components/Modal";
 import Loader from "../../components/Loader";
@@ -35,12 +35,9 @@ export default function Home() {
       try {
         setIsLoading(true);
 
-        const response = await fetch(
-          `http://localhost:3001/contacts?orderBy=${orderBy}`
-        );
+        const contactsList = await ContactsService.listContacts(orderBy);
 
-        const data = await response.json();
-        setContacts(data);
+        setContacts(contactsList);
       } catch (error) {
         console.log("Erro: ", error);
       } finally {
