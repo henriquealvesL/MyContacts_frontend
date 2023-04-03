@@ -26,8 +26,7 @@ export const InputSearchContaier = styled.div`
 export const Header = styled.header`
   display: flex;
   align-items: center;
-  justify-content: ${({ hasError }) =>
-    hasError ? "flex-end" : "space-between"};
+  justify-content: ${({ justifyContent }) => justifyContent};
   margin-top: 32px;
   border-bottom: 2px solid ${({ theme }) => theme.colors.gray[100]};
   padding-bottom: 16px;
@@ -138,5 +137,36 @@ export const ErrorContainer = styled.div`
       display: block;
       margin-bottom: 8px;
     }
+  }
+`;
+
+export const EmptyListContainer = styled.div`
+  margin-top: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+
+  p {
+    margin-top: 8px;
+    color: ${({ theme }) => theme.colors.gray[200]};
+    text-align: center;
+  }
+
+  strong {
+    color: ${({ theme }) => theme.colors.primary.main};
+  }
+`;
+
+export const SearchNotFoundContainer = styled.div`
+  margin-top: 16px;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+
+  span {
+    color: ${({ theme }) => theme.colors.gray[200]};
+    margin-left: 24px;
+    word-break: break-word;
   }
 `;
