@@ -1,28 +1,27 @@
-import { useEffect, useState, useMemo, useCallback } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 
 import ContactsService from "../../services/ContactsService";
 
-import Modal from "../../components/Modal";
 import Loader from "../../components/Loader";
 
 import {
-  Container,
-  Header,
-  ListHeader,
   Card,
-  InputSearchContaier,
-  ErrorContainer,
+  Container,
   EmptyListContainer,
+  ErrorContainer,
+  Header,
+  InputSearchContaier,
+  ListHeader,
   SearchNotFoundContainer,
 } from "./styles";
 
+import emptyBox from "../../assets/images/empty-box.svg";
 import arrow from "../../assets/images/icons/arrow.svg";
 import edit from "../../assets/images/icons/edit.svg";
 import trash from "../../assets/images/icons/trash.svg";
-import sad from "../../assets/images/sad.svg";
-import emptyBox from "../../assets/images/empty-box.svg";
 import magnifierQuestion from "../../assets/images/magnifier-question.svg";
+import sad from "../../assets/images/sad.svg";
 import Button from "../../components/Button";
 
 export default function Home() {
@@ -160,10 +159,10 @@ export default function Home() {
 
               <div className="actions">
                 <Link to={`/edit/${contact.id}`}>
-                  <img src={edit}></img>
+                  <img src={edit} alt="edit"></img>
                 </Link>
                 <button type="button">
-                  <img src={trash}></img>
+                  <img src={trash} alt="trash"></img>
                 </button>
               </div>
             </Card>

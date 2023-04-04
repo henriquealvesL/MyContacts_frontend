@@ -1,3 +1,4 @@
+/* eslint-disable import/no-anonymous-default-export */
 import HttpClient from "./utils/HttpClient";
 
 class ContactsService {
