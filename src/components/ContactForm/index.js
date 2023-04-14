@@ -1,5 +1,11 @@
 import PropTypes from "prop-types";
-import { useState, useEffect, useCallback } from "react";
+import {
+  useState,
+  useEffect,
+  useCallback,
+  useImperativeHandle,
+  forwardRef,
+} from "react";
 
 import isEmailValid from "../../utils/isEmailValid";
 import formatPhone from "../../utils/formatPhone";
@@ -12,7 +18,7 @@ import Select from "../../components/Select";
 import Button from "../../components/Button";
 import FormGroup from "../FormGroup";
 
-export default function ContactForm({ buttonLabel, onSubmit }) {
+const ContactForm = forwardRef(({ buttonLabel, onSubmit }, ref) => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
@@ -25,6 +31,21 @@ export default function ContactForm({ buttonLabel, onSubmit }) {
     useErrors();
 
   const isFormValid = name && errors.length === 0;
+
+  useImperativeHandle(
+    ref,
+    () => {
+      return {
+        setFieldsValues: (contact) => {
+          setName(contact.name ?? "");
+          setEmail(contact.email ?? "");
+          setPhone(formatPhone(contact.phone ?? ""));
+          setCategoryId(contact.category_id ?? "");
+        },
+      };
+    },
+    []
+  );
 
   const loadCategories = useCallback(async () => {
     try {
@@ -72,6 +93,10 @@ export default function ContactForm({ buttonLabel, onSubmit }) {
     await onSubmit({ name, email, phone, categoryId });
 
     setIsSubmitting(false);
+    setName("");
+    setEmail("");
+    setPhone("");
+    setCategoryId("");
   }
 
   return (
@@ -126,9 +151,11 @@ export default function ContactForm({ buttonLabel, onSubmit }) {
       </ButtonContainer>
     </Form>
   );
-}
+});
 
 ContactForm.propTypes = {
   buttonLabel: PropTypes.string.isRequired,
   onSubmit: PropTypes.func.isRequired,
 };
+
+export default ContactForm;

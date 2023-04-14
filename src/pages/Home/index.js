@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 
 import ContactsService from "../../services/ContactsService";
+import formatPhone from "../../utils/formatPhone";
 
 import Loader from "../../components/Loader";
 
@@ -154,7 +155,7 @@ export default function Home() {
                   )}
                 </div>
                 <span>{contact.email}</span>
-                <span>{contact.phone}</span>
+                <span>{formatPhone(contact.phone)}</span>
               </div>
 
               <div className="actions">
