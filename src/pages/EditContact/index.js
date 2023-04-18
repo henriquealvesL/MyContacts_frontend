@@ -26,7 +26,6 @@ export default function EditContact() {
       setIsLoading(false);
       setContactName(contactData.name);
     } catch (error) {
-      console.log(error);
       history.push("/");
       toast({ type: "danger", text: "Contato não encontrado" });
     }
