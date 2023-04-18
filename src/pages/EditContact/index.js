@@ -1,12 +1,13 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { useParams, useHistory } from "react-router-dom";
+import { useHistory, useParams } from "react-router-dom";
 
 import ContactsService from "../../services/ContactsService";
+import useSafeAsyncAction from "../../hooks/useSafeAsyncAction";
 import toast from "../../utils/toast";
 
-import PageHeader from "../../components/PageHeader";
 import ContactForm from "../../components/ContactForm";
 import Loader from "../../components/Loader";
+import PageHeader from "../../components/PageHeader";
 
 export default function EditContact() {
   const [isLoading, setIsLoading] = useState(true);
@@ -17,19 +18,25 @@ export default function EditContact() {
   const { id } = useParams();
   const history = useHistory();
 
+  const safeAsyncAction = useSafeAsyncAction();
+
   const loadContact = useCallback(async () => {
     try {
       const contactData = await ContactsService.getContactById(id);
 
       contactFormRef.current.setFieldsValues(contactData);
 
-      setIsLoading(false);
-      setContactName(contactData.name);
+      safeAsyncAction(() => {
+        setIsLoading(false);
+        setContactName(contactData.name);
+      });
     } catch (error) {
-      history.push("/");
-      toast({ type: "danger", text: "Contato não encontrado" });
+      safeAsyncAction(() => {
+        history.push("/");
+        toast({ type: "danger", text: "Contato não encontrado" });
+      });
     }
-  }, [id, history]);
+  }, [id, history, safeAsyncAction]);
 
   useEffect(() => {
     loadContact();
