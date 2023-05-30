@@ -1,4 +1,10 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import {
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+  useDeferredValue,
+} from "react";
 
 import ContactsService from "../../services/ContactsService";
 
@@ -14,11 +20,13 @@ export default function useHome() {
   const [contactBeingDeleted, setContactBeingDeleted] = useState(null);
   const [isLoadingDelete, setIsLoadingDelete] = useState(false);
 
+  const deferredSearchTerm = useDeferredValue(searchTerm);
+
   const filteredContacts = useMemo(() => {
     return contacts.filter((contact) =>
-      contact.name.toLowerCase().includes(searchTerm.toLowerCase())
+      contact.name.toLowerCase().includes(deferredSearchTerm.toLowerCase())
     );
-  }, [contacts, searchTerm]);
+  }, [contacts, deferredSearchTerm]);
 
   const loadContacts = useCallback(async () => {
     try {
