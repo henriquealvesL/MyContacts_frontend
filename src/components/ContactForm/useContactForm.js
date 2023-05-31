@@ -1,10 +1,10 @@
-import { useState, useEffect, useCallback, useImperativeHandle } from "react";
+import { useEffect, useImperativeHandle, useState } from "react";
 
-import isEmailValid from "../../utils/isEmailValid";
-import formatPhone from "../../utils/formatPhone";
 import useErrors from "../../hooks/useErrors";
 import useSafeAsyncState from "../../hooks/useSafeAsyncState";
 import CategoriesService from "../../services/CategoriesService";
+import formatPhone from "../../utils/formatPhone";
+import isEmailValid from "../../utils/isEmailValid";
 
 export default function useContactForm(onSubmit, ref) {
   const [name, setName] = useState("");
@@ -41,19 +41,29 @@ export default function useContactForm(onSubmit, ref) {
     []
   );
 
-  const loadCategories = useCallback(async () => {
-    try {
-      const categoriesList = await CategoriesService.listCategories();
-      setCategories(categoriesList);
-    } catch {
-    } finally {
-      setIsLoadingCategories(false);
-    }
-  }, [setCategories, setIsLoadingCategories]);
-
   useEffect(() => {
+    const controller = new AbortController();
+    console.log("montou");
+    async function loadCategories() {
+      try {
+        const categoriesList = await CategoriesService.listCategories(
+          controller.signal
+        );
+
+        setCategories(categoriesList);
+      } catch {
+      } finally {
+        setIsLoadingCategories(false);
+      }
+    }
+
     loadCategories();
-  }, [loadCategories]);
+
+    return () => {
+      controller.abort();
+      console.log("desmontou");
+    };
+  }, [setCategories, setIsLoadingCategories]);
 
   function handleNameChange(event) {
     setName(event.target.value);
