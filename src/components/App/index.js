@@ -9,7 +9,7 @@ import Header from "../Header";
 import { Container } from "./styles";
 import ToastContainer from "../Toast/ToastContainer";
 
-import Routes from "../../Routes";
+import Router from "../../Router";
 
 function App() {
   return (
@@ -19,7 +19,7 @@ function App() {
         <ToastContainer />
         <Container>
           <Header />
-          <Routes />
+          <Router />
         </Container>
       </ThemeProvider>
     </BrowserRouter>

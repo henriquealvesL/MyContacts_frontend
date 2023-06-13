@@ -43,7 +43,6 @@ export default function useContactForm(onSubmit, ref) {
 
   useEffect(() => {
     const controller = new AbortController();
-    console.log("montou");
     async function loadCategories() {
       try {
         const categoriesList = await CategoriesService.listCategories(
@@ -61,7 +60,6 @@ export default function useContactForm(onSubmit, ref) {
 
     return () => {
       controller.abort();
-      console.log("desmontou");
     };
   }, [setCategories, setIsLoadingCategories]);
 
